@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Młynek</title>
+
+    <link rel="stylesheet" href="css/hawk.css" type="text/css" />
+    <link rel="stylesheet" href="css/main.css" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <h1>Młynek</h1>
+    </header>
+
+    <section class="mill-area">
+        <div class="mill-area__wrapper">
+            <div class="mill-area__container container">
+                <div class="mill-area__board-container">
+                    <article id="mill-board" class="mill-board">
+                        <div class="mill-board__wrapper">
+                            <div class="mill-board__game-layer">
+
+                            </div>
+
+                            <div class="mill-board__board-layer">
+                                <div class="mill-board__square-area mill-board__square-area--outer">
+                                </div>
+
+                                <div class="mill-board__square-area mill-board__square-area--middle">
+                                </div>
+
+                                <div class="mill-board__square-area mill-board__square-area--inner">
+                                </div>
+
+                                <div class="mill-board__line-area mill-board__line-area--vertical mill-board__line-area--north">
+                                </div>
+
+                                <div class="mill-board__line-area mill-board__line-area--vertical mill-board__line-area--south">
+                                </div>
+
+                                <div class="mill-board__line-area mill-board__line-area--horizontal mill-board__line-area--west">
+                                </div>
+
+                                <div class="mill-board__line-area mill-board__line-area--horizontal mill-board__line-area--east">
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="mill-area__match-details-container">
+                    <div class="mill-area__match-details-row">
+                        <section class="result-board">
+                            <div class="result-board__wrapper">
+                                <div class="result-board__container container">
+                                    <div class="result-board__player-container result-board__host-container">
+                                        <div class="result-showcase">
+                                            <div class="result-showcase__description">
+                                                <div class="player-label">
+                                                    <div class="player-label__wrapper">
+                                                        <div class="player-label__icon-container">
+                                                            <div class="pawn pawn--white">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="player-label__description-container">
+                                                            <div class="player-label__description">White</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="white-result" class="result-showcase__result">
+                                                0
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="result-board__player-container result-board__guest-container">
+                                        <div class="result-showcase">
+                                            <div class="result-showcase__description">
+                                                <div class="player-label">
+                                                    <div class="player-label__wrapper">
+                                                        <div class="player-label__icon-container">
+                                                            <div class="pawn">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="player-label__description-container">
+                                                            <div class="player-label__description">Black</div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="black-result" class="result-showcase__result">
+                                                0
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="mill-area__match-details-row">
+                        <section class="label-container">
+                            <header class="label-container__header">
+                                <h3 class="small-title">Whose turn:</h3>
+                            </header>
+
+                            <div class="label-container__content">
+                                <section class="whose-turn-label">
+                                    <div class="whose-turn-label__wrapper">
+                                        <div class="player-label">
+                                            <div class="player-label__wrapper">
+                                                <div class="player-label__icon-container">
+                                                    <div class="pawn pawn--white">
+                                                    </div>
+                                                </div>
+
+                                                <div class="player-label__description-container">
+                                                    <div class="player-label__description">White</div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="mill-area__match-details-row">
+                        <section class="info-box">
+                            <div class="info-box__wrapper">
+                                <header class="info-box__header">
+
+                                </header>
+
+                                <div class="info-box__content">
+                                    <div class="game-message">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/functions.js"></script>
+
+    <script src="js/hawk.js"></script>
+
+    <script src="js/BoardGames/_BoardGames.js"></script>
+    <script src="js/BoardGames/Board.js"></script>
+    <script src="js/BoardGames/Movement.js"></script>
+    <script src="js/BoardGames/MinMaxAlgorithm.js"></script>
+
+    <script src="js/Coordinates/_Coordinates.js"></script>
+    <script src="js/Coordinates/Point.js"></script>
+
+    <script src="js/NineMensMorris/_NineMensMorris.js"></script>
+    <script src="js/NineMensMorris/MillWorthEstimator.js"></script>
+    <script src="js/NineMensMorris/MillMovementFinder.js"></script>
+    <script src="js/NineMensMorris/MillComputerPlayer.js"></script>
+    <script src="js/NineMensMorris/MillPlayerColor.js"></script>
+    <script src="js/NineMensMorris/MillBoard.js"></script>
+    <script src="js/NineMensMorris/MillSeekingResult.js"></script>
+    <script src="js/NineMensMorris/MillSeeker.js"></script>
+    <script src="js/NineMensMorris/MillWalker.js"></script>
+
+    <script src="js/classes.js"></script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
