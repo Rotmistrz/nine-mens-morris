@@ -36,7 +36,41 @@ NineMensMorris.MillWorthEstimator = function() {
 
         var pawnsRatio = pawnsRatio + millsRatio;
 
-        var result = pawnsRatio * 10 + millsRatio * 16  + halfMillsRatio * 3;
+        var result = pawnsRatio * 8 + millsRatio * 16 + halfMillsRatio * 6;
+
+        //var result = millsRatio;
+
+        return result;
+    }
+
+    this.estimateSimple = function(board, color) {
+        var seeker = new NineMensMorris.MillSeeker(board);
+
+        var enemyColor = NineMensMorris.MillPlayerColor.getEnemy(color);
+
+        var millsResult = seeker.seek(color);
+        var enemyMillsResult = seeker.seek(enemyColor);
+
+        var millsRatio = millsResult.getMillsAmount() - enemyMillsResult.getMillsAmount();
+
+        var result = millsRatio;
+
+        //var result = millsRatio;
+
+        return result;
+    }
+
+    this.estimateMills = function(board, color) {
+        var seeker = new NineMensMorris.MillSeeker(board);
+
+        var enemyColor = NineMensMorris.MillPlayerColor.getEnemy(color);
+
+        var millsResult = seeker.seek(color);
+        var enemyMillsResult = seeker.seek(enemyColor);
+
+        var millsRatio = (millsResult.getMillsAmount()) / (millsResult.getMillsAmount() + enemyMillsResult.getMillsAmount());
+
+        var result = millsRatio;
 
         //var result = millsRatio;
 

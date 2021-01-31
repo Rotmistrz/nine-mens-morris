@@ -24,6 +24,8 @@ BoardGames.Board = function(dimension) {
     }
 
     this.reset = function() {
+        delete this.board;
+
         this.board = null;
         this.board = [];
 
@@ -96,5 +98,22 @@ BoardGames.Board = function(dimension) {
         }
 
         return cloned;
+    }
+
+    this.getPlayerPawns = function(color) {
+        var pawns = [];
+        var current;
+
+        for (var i = 1; i <= this.dimension; i++) {
+            for (var j = 1; j <= this.dimension; j++) {
+                current = this.get(i, j);
+
+                if (current == color) {
+                    pawns.push(new Coordinates.Point(i, j));
+                }
+            }
+        }
+
+        return pawns;
     }
 }

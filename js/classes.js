@@ -104,7 +104,10 @@ function GameManager(board, options) {
         END: 3
     };
 
-    this.computer = new NineMensMorris.MillComputerPlayer(NineMensMorris.MillPlayerColor.BLACK);
+    this.currentRound = 1;
+
+    this.computer = new NineMensMorris.MillComputerPlayer(NineMensMorris.MillPlayerColor.WHITE);
+    this.secondComputer = new NineMensMorris.MillComputerPlayer(NineMensMorris.MillPlayerColor.BLACK);
 
     this.defaultOptions = {
         onMainStateBegin: function() {},
@@ -133,6 +136,22 @@ function GameManager(board, options) {
     this.currentPart = this.gameParts.BEGINNING;
 
     this.removingEnemyPawn = false;
+
+    this.isWon = function() {
+        var whites = this.board.getPlayerPawns(NineMensMorris.MillPlayerColor.WHITE);
+        var blacks = this.board.getPlayerPawns(NineMensMorris.MillPlayerColor.BLACK);
+
+        console.log("whites: " + whites);
+        console.log("blacks: " + blacks);
+
+        if (whites.length < 3) {
+            return NineMensMorris.MillPlayerColor.BLACK;
+        } else if (blacks.length < 3) {
+            return NineMensMorris.MillPlayerColor.WHITE;
+        } else {
+            return -1;
+        }
+    }
 
     this.increaseWhiteResult = function() {
         this.result.white++;
@@ -169,7 +188,7 @@ function GameManager(board, options) {
     }
 
     this.isComputerTurn = function() {
-        return this.whoseTurn() == this.computer.getColor();
+        return true;// this.whoseTurn() == this.computer.getColor();
     }
 
     this.getPlayerColor = function() {
@@ -193,7 +212,7 @@ function GameManager(board, options) {
     }
 
     this.isBeginningEnded = function(pawnsAmount) {
-        return pawnsAmount >= 18;
+        return pawnsAmount >= 8;
     }
 
     this.millFound = function(x, y) {
@@ -217,22 +236,79 @@ function GameManager(board, options) {
     }
 
     this.nextTurn = function() {
-        if (this.currentPlayer == NineMensMorris.MillPlayerColor.WHITE) {
-            this.currentPlayer = NineMensMorris.MillPlayerColor.BLACK;
+        var isWon = this.isWon();
+
+        console.log(this.currentRound);
+
+        this.currentRound++;
+
+        if (this.getGamePart() != this.gameParts.BEGINNING && isWon > -1) {
+            var $pawn = $('#winner').find('.pawn');
+            var $desc = $('#winner').find('.player-label__description');
+
+            $('.overlayer').css({ display: 'block' });
+
+            if (isWon == NineMensMorris.MillPlayerColor.WHITE) {
+
+            } else {
+                $pawn.removeClass('pawn--white');
+                $desc.html("Black");
+            }
         } else {
-            this.currentPlayer = NineMensMorris.MillPlayerColor.WHITE;
-        }
+            if (this.currentPlayer == NineMensMorris.MillPlayerColor.WHITE) {
+                this.currentPlayer = NineMensMorris.MillPlayerColor.BLACK;
+            } else {
+                this.currentPlayer = NineMensMorris.MillPlayerColor.WHITE;
+            }
 
-        this.options.onTurnChanged(this.currentPlayer);
+            this.options.onTurnChanged(this.currentPlayer);
 
-        if (this.isComputerTurn()) {
-            console.log("COMPUTER's TURN");
-            this.board.board.present();
-            var movement = this.computer.getBestMove(this.board.board);
+            if (this.board.isFinalMovements(this.currentPlayer)) {
+                console.log("ostatnie ruchy");
+            }
 
-            var field = movement.getField();
+            var currentAI;
 
-            this.makeMovePlaceNewPawn(field.getX(), field.getY(), this.computer.getColor());
+            if (this.currentPlayer == NineMensMorris.MillPlayerColor.WHITE) {
+                currentAI = this.computer;
+            } else {
+                currentAI = this.secondComputer;
+            }
+
+            if (this.isComputerTurn()) {
+                if (this.getGamePart() == this.gameParts.BEGINNING) {
+                    console.log("COMPUTER's TURN");
+                    //this.board.board.present();
+                    var movement = currentAI.getBestMove(this.board.board);
+
+                    var field = movement.getField();
+                    var board = movement.getBoard();
+
+                    board.present();
+
+                    this.makeMovePlaceNewPawn(field.getX(), field.getY(), currentAI.getColor());
+                } else if (this.getGamePart() == this.gameParts.MAIN) {
+                    var children = currentAI.getPossibleMoves(this.board.board);
+
+                    if (children.length > 0) {
+                        var possibleMove;
+
+                        if (this.board.isFinalMovements(this.currentPlayer)) {
+                            possibleMove = currentAI.getBestFinalMove(this.board.board);
+                        } else {
+                            possibleMove = currentAI.getBestReplacingMove(this.board.board);
+                        }
+
+                        var pawnToMove = this.board.getPawn(possibleMove.getFrom().getX(),possibleMove.getFrom().getY());
+
+                        this.board.movePawn(pawnToMove);
+
+                        console.log(this.board.placePawn(possibleMove.getTo().getX(), possibleMove.getTo().getY()));
+                    } else {
+                        this.nextTurn();
+                    }
+                }
+            }
         }
 
         return this.currentPlayer;
@@ -293,6 +369,18 @@ function Board(container, board, options) {
     };
 
     this.options = Hawk.mergeObjects(this.defaultOptions, options);
+
+    this.setBoard = function(board) {
+        this.board = board;
+    }
+
+    this.isFinalMovements = function(color) {
+        if (color == NineMensMorris.MillPlayerColor.WHITE) {
+            return this.pawnsAmount.white < 4;
+        } else {
+            return this.pawnsAmount.black < 4;
+        }
+    }
 
     this.getAllPawnsAmount = function() {
         return this.allPawnsAmount;
@@ -531,18 +619,25 @@ function Board(container, board, options) {
             onClick: function(fieldArea) {
                 var color;
 
-                if (that.gameManager.isEnemyPawnBeingRemoved()) {
-                    if (that.removePawn(fieldArea)) {
-                        that.gameManager.finishRemovingEnemyPawn();
-                    }
-                } else if (that.gameManager.getGamePart() != that.gameManager.gameParts.BEGINNING) {
-                    console.log(that.gameManager.getGamePart() + " Pawn [" + color + "]: (" + fieldArea.getX() + ", " + fieldArea.getY() + ")");
+                if (that.gameManager.isComputerTurn()) {
+                    return false;
+                }
 
-                    if ((fieldArea.isBlack() && that.gameManager.isBlackTurn())
-                        || !fieldArea.isBlack() && !that.gameManager.isBlackTurn()) {
-                        that.movePawn(fieldArea);
+                if (that.gameManager.isWon() < 0) {
+                    if (that.gameManager.isEnemyPawnBeingRemoved()) {
+                        if (that.removePawn(fieldArea)) {
+                            that.gameManager.finishRemovingEnemyPawn();
+                        }
+                    } else if (that.gameManager.getGamePart() != that.gameManager.gameParts.BEGINNING) {
+                        console.log(that.gameManager.getGamePart() + " Pawn [" + color + "]: (" + fieldArea.getX() + ", " + fieldArea.getY() + ")");
+
+                        if ((fieldArea.isBlack() && that.gameManager.isBlackTurn())
+                            || !fieldArea.isBlack() && !that.gameManager.isBlackTurn()) {
+                            that.movePawn(fieldArea);
+                        }
                     }
                 }
+
             },
             color: color
         });

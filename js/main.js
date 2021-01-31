@@ -58,6 +58,11 @@ while (walker.canForward()) {
 
     var fieldArea = new FieldArea($('<div class="mill-board__field-area"></div>'), point.getX(), point.getY(), {
         onClick: function(fieldArea) {
+
+            if (gameManager.isComputerTurn()) {
+                return false;
+            }
+
             var currX = fieldArea.getX();
             var currY = fieldArea.getY();
 
@@ -92,8 +97,10 @@ while (walker.canForward()) {
                 } else if (neighbours.east != null && neighbours.east.equalsTo(currX, currY)
                     && !gameBoard.isFieldOccupied(currX, currY)) {
                     gameBoard.placePawn(currX, currY);
+                } else if (gameBoard.isFinalMovements(pawnToMove.getColor())) {
+                    gameBoard.placePawn(currX, currY);
                 } else {
-                    console.log("Nie wolno tu ruszac!");
+                    console.log("Nie wolno tu ruszać!");
                 }
             }
         }
@@ -132,3 +139,5 @@ while (walker.canForward()) {
 
     i++;
 }
+
+gameManager.nextTurn();

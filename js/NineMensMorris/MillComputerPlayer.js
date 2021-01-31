@@ -22,6 +22,18 @@ NineMensMorris.MillComputerPlayer = function(color) {
         return this.minmax.getBestMove(board);
     }
 
+    this.getBestReplacingMove = function(board) {
+        return this.minmax.getBestReplacingMove(board);
+    }
+
+    this.getBestFinalMove = function(board) {
+        return this.minmax.getBestFinalMove(board);
+    }
+
+    this.getPossibleMoves = function(board) {
+        return this.minmax.getPossibleMoves(board);
+    }
+
     this.getRandomMove = function(board) {
         var moves = this.finder.find(board, this.color);
 
